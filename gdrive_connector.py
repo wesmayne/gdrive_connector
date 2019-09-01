@@ -56,4 +56,6 @@ def google_upload():
     file1.Upload()
 
 #sql_import()
-google_upload()
+#google_upload()
+
+print(os.getcwd())
