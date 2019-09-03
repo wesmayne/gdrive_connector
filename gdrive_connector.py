@@ -1,4 +1,5 @@
-'''Program to read an SQL view into pandas, convert it to an excel file, then upload to Google Drive for use in the TMS Track n Trace app
+'''Program to read an SQL view into pandas, convert it to an excel file, then upload to 
+Google Drive for use in the TMS Track n Trace app
 '''
 import os
 import configparser
@@ -40,22 +41,16 @@ def google_upload():
     g_login.LocalWebserverAuth()
     # Create GoogleDrive instance with authenticated GoogleAuth instance.
     drive = GoogleDrive(g_login)
-    # scan through the gdrive subfolder and delete any files with matching titles
-    file_list = drive.ListFile({'q':"'1AhKTdDTYrGILm50sjlROQ09Be3TOfXN8' in parents and trashed=False"}).GetList()
-    try:
-        for f in file_list:
-            if f['title'] == 'trackntracetest':
-                f.Delete()                
-    except:
-        pass
-    # create google drive file with specified file name and save to specified folder id
-    file1 = drive.CreateFile({"title": "trackntracetest", 'parents': [{'id': folder_id}]})
+
+    # create google drive file with specified file name and matching doc id and save to specified folder id
+    file1 = drive.CreateFile({"id":"1-_C8UttiVf46wF3krBHWTL1Q3eENnLei" , "title": "trackntrace", 'parents': [{'id': folder_id}]})
     # set the file path to retrieve file from
     file1.SetContentFile(download_path)
     # upload file to google drive
     file1.Upload()
 
-#sql_import()
-#google_upload()
 
-print(os.getcwd())
+
+
+sql_import()
+google_upload()
