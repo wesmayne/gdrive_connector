@@ -4,10 +4,12 @@ Google Drive for use in the TMS Track n Trace app
 import os
 import configparser
 
+import smtplib
 import pandas as pd
 import sqlalchemy
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
+
 
 # global variables read from config file
 config = configparser.ConfigParser()
@@ -22,10 +24,14 @@ servername = config['DATABASE']['servername']
 database = config['DATABASE']['database']
 query_orders = config['DATABASE']['query_orders']
 query_products = config['DATABASE']['query_products']
+# read email details from config
+sender_email = config['EMAIL']['sender_email']
+receiver_email = config['EMAIL']['receiver_email']
+email_password = config['EMAIL']['email_password']
 
 
 def sql_import():
-    connection_string = f'mssql+pymssql://{user}:{password}@{servername}/{database}'
+    connection_string = f'mssql+pymssql://{user}:{password}@{sname}/{database}'
     engine = sqlalchemy.create_engine(connection_string)
     conn = engine.connect()
     # create a pandas dataframe from each query
@@ -38,7 +44,7 @@ def sql_import():
 
 def google_upload():
     g_login = GoogleAuth()
-    g_login.LocalWebserverAuth()
+    g_login.LocalWebsAuth()
     # Create GoogleDrive instance with authenticated GoogleAuth instance.
     drive = GoogleDrive(g_login)
 
@@ -49,8 +55,21 @@ def google_upload():
     # upload file to google drive
     file1.Upload()
 
+def error_email(ex):
+    message = ('''Subject: TracknTrace App - Data Import Error
 
+    ***AUTOMATED EMAIL***\n\nData import to Track n' Trace app has failed.\n\nError Code:\n\n'''+str(ex))       
 
-
-sql_import()
-google_upload()
+    mailserver = smtplib.SMTP('smtp.office365.com',587)
+    mailserver.ehlo()
+    mailserver.starttls()
+    mailserver.login(sender_email, email_password)
+    mailserver.sendmail(sender_email,receiver_email, message)
+    mailserver.quit()
+    
+    
+try:
+    sql_import()
+    google_upload()
+except Exception as ex:
+    error_email(ex)
