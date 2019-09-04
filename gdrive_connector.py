@@ -31,7 +31,7 @@ email_password = config['EMAIL']['email_password']
 
 
 def sql_import():
-    connection_string = f'mssql+pymssql://{user}:{password}@{sname}/{database}'
+    connection_string = f'mssql+pymssql://{user}:{password}@{servername}/{database}'
     engine = sqlalchemy.create_engine(connection_string)
     conn = engine.connect()
     # create a pandas dataframe from each query
@@ -44,7 +44,7 @@ def sql_import():
 
 def google_upload():
     g_login = GoogleAuth()
-    g_login.LocalWebsAuth()
+    g_login.LocalWebserverAuth()
     # Create GoogleDrive instance with authenticated GoogleAuth instance.
     drive = GoogleDrive(g_login)
 
