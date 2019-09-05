@@ -1,5 +1,5 @@
 '''Program to read an SQL view into pandas, convert it to an excel file, then upload to 
-Google Drive for use in the TMS Track n Trace app
+Google Drive for use in the TMS Track n Trace app. 
 '''
 import os
 import configparser
@@ -9,7 +9,6 @@ import pandas as pd
 import sqlalchemy
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
-
 
 # global variables read from config file
 config = configparser.ConfigParser()
